@@ -16,6 +16,7 @@ router.post("/register", async (req, res) => {
 
     if (existingUser.length > 0) {
       res.status(300).json({ data: "user already register" });
+      return;
     }
 
     const newUSer = await User.create({ name, email, password });
@@ -82,7 +83,7 @@ router.patch("/flights/:id", async (req, res) => {
   let data = req.body;
   try {
     const flight = await Flight.findByIdAndUpdate(id, data, { new: true });
-    res.status(202).json({ data: flight });
+    res.status(204).json({ data: flight });
   } catch (err) {
     console.log("err:", err);
     res.status(404).json({ data: "something went wrong" });
@@ -138,12 +139,14 @@ router.post("/booking", async (req, res) => {
   const { user, flight } = req.body;
   if (!user || !flight) {
     res.status(300).json({ data: "Kindly enter all details" });
+    return;
   } else {
     try {
       const existingBooking = await Booking.find({ user, flight });
 
       if (existingBooking.length > 0) {
-        res.status(300).json({ data: "user already register" });
+        res.status(300).json({ data: "booking already register" });
+        return;
       }
       const booking = await Booking.create({
         user,
@@ -167,6 +170,9 @@ router.get("/dashboard", async (req, res) => {
     console.log("err:", err);
     res.status(404).json({ data: "something went wrong" });
   }
+});
+router.all("/*", async (req, res) => {
+  res.status(404).json({ data: "Invalid endPoint" });
 });
 
 module.exports = router;

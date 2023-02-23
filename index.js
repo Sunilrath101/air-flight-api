@@ -11,10 +11,14 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.send("lkjhgfbdgfhj,k");
+  res.send("Welcome to Air india Flight");
 });
 
 app.use("/api", userRouter);
+
+app.all("/*", async (req, res) => {
+  res.status(404).json({ data: "Invalid endPoint" });
+});
 
 app.listen(PORT, () => {
   db();
